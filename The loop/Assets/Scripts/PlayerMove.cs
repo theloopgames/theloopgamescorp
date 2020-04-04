@@ -11,7 +11,7 @@ public class PlayerMove : MonoBehaviour
     public Sprite spriteUp;
     public Sprite spriteDown;
     public Sprite spriteLeft;
-    public int health;
+    public int health =100;
     private SpriteRenderer currSprite;
 
     bool FaceLeft = true;
@@ -27,6 +27,8 @@ public class PlayerMove : MonoBehaviour
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
         rb.MovePosition(rb.position + Vector2.right * speed * moveX * Time.deltaTime + Vector2.up * speed * moveY * Time.deltaTime);
+
+        content = new GUIContent(" " + health, BoxTexture, "");
 
         SetSprite(); //Як зделать шоби не було лунной походки (вопрос до Ігоря)
 
@@ -66,4 +68,29 @@ public class PlayerMove : MonoBehaviour
     {
         damage += addDamage;
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "enemy")
+        {
+            health -= 1;
+            if (health == 0)
+            {
+                Invoke("Reload", 1);
+            }
+        }
+    }
+    void Reload()
+    {
+        Application.LoadLevel(Application.loadedLevel);
+    }
+
+    GUIContent content;
+    public Texture BoxTexture;
+
+    void OnGUI()
+    {
+        GUI.Box(new Rect(570 ,400, 70, 40),content);
+    }
+
 }
